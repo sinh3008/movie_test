@@ -85,7 +85,7 @@ class _PopularListScreenState extends State<PopularListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Back'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
       ),
       body: RefreshIndicator(
         onRefresh: _refreshMovies,
