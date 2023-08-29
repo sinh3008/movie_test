@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:movie_test/screen/loading_screen.dart';
 
-import '../popular_list_screen.dart';
+import '../popular/popular_list_screen.dart';
 
 GestureDetector buildGestureDetector(BuildContext context) {
   return GestureDetector(
@@ -9,7 +8,7 @@ GestureDetector buildGestureDetector(BuildContext context) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const LoadingScreen(),
+          builder: (context) => const PopularListScreen(),
         ),
       );
     },
