@@ -1,7 +1,7 @@
 import 'package:movie_test/services/networking.dart';
 
 const apiKey = '26763d7bf2e94098192e629eb975dab0';
-const page = 1;
+const page = '1';
 
 class PopularListModel {
   Future<dynamic> getPopular() async {

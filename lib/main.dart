@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:movie_test/screen/popular_list_screen.dart';
 
 import 'screen/widgets/button_home.dart';
 
