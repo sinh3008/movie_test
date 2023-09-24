@@ -1,101 +1,105 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_test/bloc/details_bloc/detail_movie_bloc.dart';
+import 'package:movie_test/models/movie_model.dart';
+import 'package:movie_test/screen/details/details_screen.dart';
+import 'package:movie_test/screen/popular/widgets/body.dart';
 
-import 'package:movie_test/screen/popular/body.dart';
+import '../../bloc/movies_bloc/movie_bloc.dart';
 
 class PopularListScreen extends StatefulWidget {
   const PopularListScreen({super.key});
 
   @override
-  _PopularListScreenState createState() => _PopularListScreenState();
-}
-
-const apiKey = '26763d7bf2e94098192e629eb975dab0';
-const page = '1';
-
-class Movie {
-  final String title;
-  final double voteAverage;
-  final String posterPath;
-  final String releaseDate;
-
-  Movie({
-    required this.title,
-    required this.voteAverage,
-    required this.posterPath,
-    required this.releaseDate,
-  });
+  State<PopularListScreen> createState() => _PopularListScreenState();
 }
 
 class _PopularListScreenState extends State<PopularListScreen> {
-  List<Movie> movies = [];
-  int currentPage = 1;
-  List<Movie> allMovies = [];
-
   @override
   void initState() {
     super.initState();
-    fetchMovies();
+    context.read<MovieBloc>().add(MoviesFetchedEvent());
   }
 
-  Future<void> fetchMovies() async {
-    var url = Uri.https(
-      'api.themoviedb.org',
-      '3/discover/movie',
-      {
-        'api_key': apiKey,
-        'page': currentPage.toString(),
-      },
-    );
-
-    final response = await http.get(url);
-    final data = json.decode(response.body);
-    final results = data['results'];
-
-    setState(() {
-      movies = results
-          .map<Movie>((json) => Movie(
-                title: json['title'],
-                voteAverage: json['vote_average'].toDouble(),
-                posterPath: json['poster_path'],
-                releaseDate: json['release_date'],
-              ))
-          .toList();
-      allMovies.addAll(movies);
-    });
-  }
-
-  void loadMoreMovies() {
-    currentPage++;
-    fetchMovies();
-  }
-
-  Future<void> _refreshMovies() async {
-    setState(() {
-      allMovies.clear();
-      currentPage = 1;
-    });
-    await fetchMovies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Back'),
-        backgroundColor: Colors.white,
+        title: const Text('Movie'),
+        centerTitle: true,
       ),
-      body: RefreshIndicator(
-        onRefresh: _refreshMovies,
-        child: Body(allMovies: allMovies),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          loadMoreMovies();
-        },
-        child: const Icon(Icons.add),
+      body: SafeArea(
+        child: BlocBuilder<MovieBloc, MovieState>(
+          builder: (context, state) {
+            if (state is MovieListLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is MovieListSuccess) {
+              return GridView.builder(
+                padding: EdgeInsets.zero,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.6,
+                ),
+                itemCount: state.movies.length,
+                itemBuilder: (context, index) {
+                  if (index < state.movies.length) {
+                    final movie = state.movies[index];
+                    if (movie.voteAverage == 0.0) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 0.5),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 2, // Phạm vi đổ bóng
+                              blurRadius: 5, // Độ mờ của đổ bóng
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                          image: DecorationImage(
+                            image: NetworkImage(
+                              movie.posterPath,
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        margin: const EdgeInsets.all(14),
+                        child: const Center(child: Text('Error')),
+                      );
+                    }
+                    return GestureDetector(
+                      onTap: () {
+                        BlocListener<DetailMovieBloc, DetailMovieState>(
+                          listener: (context, state) {
+                            context
+                                .read<DetailMovieBloc>()
+                                .add(LoadMovieDetailEvent(movie.id));
+                          },
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return DetailsScreen(id: state.movies[index].id);
+                            },
+                          ),
+                        );
+                      },
+                      child: Body(
+                        movie: movie,
+                      ),
+                    );
+                  }
+                },
+              );
+            } else {
+              return Center(
+                child: Text(state.toString()),
+              );
+            }
+          },
+        ),
       ),
     );
   }
