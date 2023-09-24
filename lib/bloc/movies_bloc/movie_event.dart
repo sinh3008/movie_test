@@ -4,5 +4,4 @@ abstract class MovieEvent {}
 
 class LoadMoviesEvent extends MovieEvent {}
 
-class MoviesFetchedEvent extends MovieEvent{}
-
+class MoviesFetchedEvent extends MovieEvent {}

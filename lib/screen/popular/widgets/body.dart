@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../../models/movie_model.dart';
 
-
 class Body extends StatelessWidget {
   const Body({super.key, required this.movie});
 
   final Movie movie;
+
   @override
   Widget build(BuildContext context) {
     return Container(

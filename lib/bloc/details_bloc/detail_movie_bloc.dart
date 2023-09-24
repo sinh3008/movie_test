@@ -13,7 +13,7 @@ part 'detail_movie_state.dart';
 const apiKey = '26763d7bf2e94098192e629eb975dab0';
 
 class DetailMovieBloc extends Bloc<DetailMovieEvent, DetailMovieState> {
-  late final Movie? movie;
+  late  Movie movie;
 
   DetailMovieBloc() : super(DetailMovieInitial()) {
     on<DetailMovieEvent>((event, emit) {});

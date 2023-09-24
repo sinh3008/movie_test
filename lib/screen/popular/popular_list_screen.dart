@@ -21,6 +21,11 @@ class _PopularListScreenState extends State<PopularListScreen> {
     context.read<MovieBloc>().add(MoviesFetchedEvent());
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
