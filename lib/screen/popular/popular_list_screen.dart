@@ -55,14 +55,14 @@ class _PopularListScreenState extends State<PopularListScreen> {
                           listener: (context, state) {
                             context
                                 .read<DetailMovieBloc>()
-                                .add(LoadMovieDetailEvent(movie));
+                                .add(LoadMovieDetailEvent(movie.id));
                           },
                         );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return DetailsScreen(movie: state.movies[index]);
+                              return DetailsScreen(idMovie: movie.id,);
                             },
                           ),
                         );

@@ -4,9 +4,9 @@ import 'package:movie_test/bloc/details_bloc/detail_movie_bloc.dart';
 import 'package:movie_test/models/movie_model.dart';
 
 class DetailsScreen extends StatefulWidget {
-  const DetailsScreen({Key? key, required this.movie}) : super(key: key);
+  const DetailsScreen({Key? key, required this.idMovie}) : super(key: key);
 
-  final Movie movie;
+  final int idMovie;
 
   @override
   State<DetailsScreen> createState() => _DetailsScreenState();
@@ -16,7 +16,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<DetailMovieBloc>().add(LoadMovieDetailEvent(widget.movie));
+    context.read<DetailMovieBloc>().add(LoadMovieDetailEvent(widget.idMovie));
   }
 
   @override
@@ -51,7 +51,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   Widget buildMovieDetails(Movie movie, double width) {
-    List<dynamic> gn = widget.movie.genres;
+    List<dynamic> gn = movie.genres;
     List<String> danhSachString = gn.map((item) => item.toString()).toList();
     String chuoiKetQua = danhSachString.join('/');
 
@@ -64,7 +64,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             height: 20,
           ),
           Hero(
-            tag: 'movieCard${widget.movie.id}',
+            tag: 'movieCard${movie.id}',
             child: Container(
               margin: const EdgeInsets.all(10),
               padding: EdgeInsets.zero,
