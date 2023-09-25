@@ -1,9 +1,12 @@
+import 'package:movie_test/repo/iNetworking.dart';
+
 import '../models/movie_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class NetWorking{
-  Future<Movie?> fetchMovie(int idMovie) async {
+class NetWorking extends INetworking {
+  @override
+  Future<Movie> fetchMovie(int idMovie) async {
     try {
       var url = Uri.https(
         'yts.mx',
@@ -19,27 +22,20 @@ class NetWorking{
         final results = data['data']['movie'];
 
         if (results != null) {
-          return Movie(
-            id: results['id'],
-            title: results['title'],
-            voteAverage: results['rating'].toDouble(),
-            posterPath: results['large_cover_image'],
-            releaseDate: results['year'],
-            genres: List<String>.from(results['genres']),
-            overView: results['description_full'],
-          );
+          return Movie.fromJson(results);
         } else {
-          return null;
+          throw Exception('Failed to load else1');
         }
       } else {
-        return null;
+        throw Exception('Failed to load else 2');
       }
     } catch (e) {
       print('Error: $e');
-      return null;
+      throw Exception('Failed to load $e');
     }
   }
 
+  @override
   Future<List<Movie>> fetchMovies() async {
     var url = Uri.https(
       'yts.mx',
@@ -51,22 +47,10 @@ class NetWorking{
     final results = data['data']['movies'];
     List<Movie> movies = [];
     movies = results
-        .map<Movie>((json) => Movie(
-      id: json['id'],
-      title: json['title'],
-      voteAverage: json['rating'].toDouble(),
-      posterPath: json['large_cover_image'],
-      releaseDate: json['year'],
-      genres: json['genres'],
-      overView: json['description_full'],
-    ))
+        .map<Movie>((json) => Movie.fromJson(json))
         .toList();
     return movies;
   }
 
   NetWorking();
-
 }
-
-
-

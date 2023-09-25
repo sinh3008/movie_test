@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:movie_test/repo/iNetworking.dart';
 
 import '../../models/movie_model.dart';
 
@@ -22,8 +23,8 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
   FutureOr<void> _loadMovies(
       MoviesFetchedEvent event, Emitter<MovieState> emit) async {
     emit(MovieListLoading());
-    final NetWorking netWorking = NetWorking();
-    movies = await netWorking.fetchMovies();
+    final iNetworking = NetWorking();
+    movies = await iNetworking.fetchMovies();
     if (movies.isNotEmpty) {
       emit(MovieListSuccess(movies));
     } else {

@@ -10,7 +10,7 @@ part 'detail_movie_event.dart';
 part 'detail_movie_state.dart';
 
 class DetailMovieBloc extends Bloc<DetailMovieEvent, DetailMovieState> {
-  late Movie movie;
+  late Movie? movie;
 
   DetailMovieBloc() : super(DetailMovieInitial()) {
     on<DetailMovieEvent>((event, emit) {});
@@ -21,12 +21,11 @@ class DetailMovieBloc extends Bloc<DetailMovieEvent, DetailMovieState> {
     LoadMovieDetailEvent event,
     Emitter<DetailMovieState> emit,
   ) async {
-    final NetWorking netWorking = NetWorking();
-
+    final netWorking = NetWorking();
     emit(DetailMovieLoading());
-    movie = (await netWorking.fetchMovie(event.idMovie))!;
+    movie = await netWorking.fetchMovie(event.idMovie);
     if (movie != null) {
-      emit(DetailMovieSuccess(movie));
+      emit(DetailMovieSuccess(movie!));
     } else {
       emit(DetailMovieError(error: 'Failed to fetch movie details'));
     }
