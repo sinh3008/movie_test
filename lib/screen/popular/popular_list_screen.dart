@@ -42,51 +42,27 @@ class _PopularListScreenState extends State<PopularListScreen> {
               return GridView.builder(
                 padding: EdgeInsets.zero,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: 3,
                   childAspectRatio: 0.6,
                 ),
                 itemCount: state.movies.length,
                 itemBuilder: (context, index) {
                   if (index < state.movies.length) {
                     final movie = state.movies[index];
-                    if (movie.voteAverage == 0.0) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 0.5),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 2, // Phạm vi đổ bóng
-                              blurRadius: 5, // Độ mờ của đổ bóng
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                          image: DecorationImage(
-                            image: NetworkImage(
-                              movie.posterPath,
-                            ),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        margin: const EdgeInsets.all(14),
-                        child: const Center(child: Text('Error')),
-                      );
-                    }
                     return GestureDetector(
                       onTap: () {
                         BlocListener<DetailMovieBloc, DetailMovieState>(
                           listener: (context, state) {
                             context
                                 .read<DetailMovieBloc>()
-                                .add(LoadMovieDetailEvent(movie.id));
+                                .add(LoadMovieDetailEvent(movie));
                           },
                         );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return DetailsScreen(id: state.movies[index].id);
+                              return DetailsScreen(movie: state.movies[index]);
                             },
                           ),
                         );
