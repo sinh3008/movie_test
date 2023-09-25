@@ -27,10 +27,21 @@ class _PopularListScreenState extends State<PopularListScreen> {
   }
 
   Widget build(BuildContext context) {
+    bool switchValue = false;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Movie'),
+        title: const Text('Movie', style: TextStyle(color: Colors.black)),
         centerTitle: true,
+        backgroundColor: Colors.white,
+        actions: [
+          Switch(
+              value: switchValue,
+              onChanged: (newValue) {
+                setState(() {
+                  switchValue = newValue;
+                });
+              })
+        ],
       ),
       body: SafeArea(
         child: BlocBuilder<MovieBloc, MovieState>(
@@ -51,18 +62,17 @@ class _PopularListScreenState extends State<PopularListScreen> {
                     final movie = state.movies[index];
                     return GestureDetector(
                       onTap: () {
-                        BlocListener<DetailMovieBloc, DetailMovieState>(
-                          listener: (context, state) {
-                            context
-                                .read<DetailMovieBloc>()
-                                .add(LoadMovieDetailEvent(movie.id));
-                          },
-                        );
+                        context
+                            .read<DetailMovieBloc>()
+                            .add(LoadMovieDetailEvent(movie.id));
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return DetailsScreen(idMovie: movie.id,);
+                              return DetailsScreen(
+                                idMovie: movie.id,
+                              );
                             },
                           ),
                         );
